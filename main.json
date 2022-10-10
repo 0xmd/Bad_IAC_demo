@@ -1,0 +1,125 @@
+{
+    "data": {
+        "aws_ami": {
+            "amazon-linux-2": [
+                {
+                    "filter": [
+                        {
+                            "name": "owner-alias",
+                            "values": [
+                                "amazon"
+                            ]
+                        },
+                        {
+                            "name": "name",
+                            "values": [
+                                "amzn2-ami-hvm*"
+                            ]
+                        }
+                    ],
+                    "most_recent": true
+                }
+            ]
+        }
+    },
+    "provider": {
+        "aws": [
+            {
+                "profile": "sandbox",
+                "region": "ap-southeast-1",
+                "shared_credentials_files": [
+                    "../.aws/credentials"
+                ]
+            }
+        ]
+    },
+    "resource": {
+        "aws_default_route_table": {
+            "default": [
+                {
+                    "default_route_table_id": "${aws_vpc.main.default_route_table_id}",
+                    "route": [
+                        {
+                            "cidr_block": "0.0.0.0/0",
+                            "gateway_id": "${aws_internet_gateway.igw.id}"
+                        }
+                    ]
+                }
+            ]
+        },
+        "aws_instance": {
+            "ssh1": [
+                {
+                    "ami": "${data.aws_ami.amazon-linux-2.id}",
+                    "associate_public_ip_address": true,
+                    "instance_type": "t2.micro",
+                    "subnet_id": "${aws_subnet.public.id}",
+                    "vpc_security_group_ids": [
+                        "${aws_security_group.allow_open_ssh.id}"
+                    ]
+                }
+            ]
+        },
+        "aws_internet_gateway": {
+            "igw": [
+                {
+                    "vpc_id": "${aws_vpc.main.id}"
+                }
+            ]
+        },
+        "aws_security_group": {
+            "allow_open_ssh": [
+                {
+                    "description": "Allow SSH inbound traffic from any",
+                    "ingress": [
+                        {
+                            "cidr_blocks": [
+                                "0.0.0.0/0"
+                            ],
+                            "description": "SSH from Any",
+                            "from_port": 22,
+                            "protocol": "tcp",
+                            "to_port": 22
+                        }
+                    ],
+                    "name": "allow_open_ssh",
+                    "vpc_id": "${aws_vpc.main.id}"
+                }
+            ]
+        },
+        "aws_subnet": {
+            "private": [
+                {
+                    "cidr_block": "10.0.1.0/24",
+                    "vpc_id": "${aws_vpc.main.id}"
+                }
+            ],
+            "public": [
+                {
+                    "cidr_block": "10.0.2.0/24",
+                    "map_public_ip_on_launch": true,
+                    "vpc_id": "${aws_vpc.main.id}"
+                }
+            ]
+        },
+        "aws_vpc": {
+            "main": [
+                {
+                    "cidr_block": "10.0.0.0/16"
+                }
+            ]
+        }
+    },
+    "terraform": [
+        {
+            "required_providers": [
+                {
+                    "aws": {
+                        "source": "hashicorp/aws",
+                        "version": "~\u003e 4.0"
+                    }
+                }
+            ]
+        }
+    ]
+}
