@@ -8,7 +8,7 @@ As part of this demo we deploy a limited stack with selected security misconfigu
 - A sandbox AWS account and privileges to deploy resources to it
 - The AWS CLI and the boto3 library for Python scripts
 - Terraform
-- We use [Conftest](https://github.com/open-policy-agent/conftest) as our Open Policy Agent wrapper; Conftest allows to write tests/policies using Rego, and run them against structured configuration data such as Terraform HCL code.
+- We use [Conftest](https://github.com/open-policy-agent/conftest) as our Open Policy Agent wrapper; Conftest allows to write tests/policies using Rego, and run them against structured configuration data such as Terraform HCL code
 
 # Scenario
 
@@ -26,10 +26,9 @@ aws ec2 describe-security-groups --query 'SecurityGroups[?IpPermissions[?ToPort=
 ```
 aws configservice describe-config-rules
 ```
-- Access AWS Config in the Console to make sure the rule has fired - If you need to apply it again:
+- Query AWS Config to see that the rule has fired:
 ```
-aws configservice put-config-rule --config-rule file://RestrictSSH.json
-aws configservice start-config-rules-evaluation --config-rule-names restrict-ssh
+aws configservice get-compliance-details-by-config-rule --config-rule-name restricted-ssh --compliance-types NON_COMPLIANT
 ```
 - Todo: Programmatic/automated remediation of the issues
 
@@ -46,8 +45,8 @@ conftest test main.json
 
 # Todo / Next steps
 
-- Automate remediation of non-compliances found by AWS Config using SSM or a Lambda function - This may have broader consequences and we may want to make sure we can see what else is using that Security Group.
-- Introduce more IAM PrivEsc vulns into stack and demonstrate enumeration using Checkov/pmapper + automate remediation
+- Automate remediation of non-compliances found by AWS Config using SSM or a Lambda function
+- Make the scenario more elaborate by introducing several IAM PrivEsc vulns into stack, do enumeration using Checkov/pmapper + demonstrate that securing the environment will require several steps and control layers
 
 # Pain points
 
