@@ -8,7 +8,7 @@ As part of this demo we deploy a limited stack with selected security misconfigu
 - A sandbox AWS account and privileges to deploy resources to it
 - The AWS CLI and the boto3 library for Python scripts
 - Terraform
-- Conftest - Used to run unit tests against structured configuration data such as Terraform code. Conftest uses the Rego language from [Open Policy Agent](https://www.openpolicyagent.org/) for writing the assertions. See [Conftest](https://www.conftest.dev/) 
+- We use [Conftest](https://github.com/open-policy-agent/conftest) as our Open Policy Agent wrapper; Conftest allows to write tests/policies using Rego, and run them against structured configuration data such as Terraform HCL code.
 
 # Scenario
 
@@ -44,10 +44,10 @@ terraform show -json main.binary > main.json
 conftest test main.json
 ```
 
-# Todo
+# Todo / Next steps
 
-- Automate remediation of unrestricted SSH rules using a serverless function, or write a custom script that will describe Security Groups, apply a filter, then call the ec2 'revoke-security-group-ingress' function - This may have broader consequences and we may want to make sure we can see what else is using that Security Group.
-- Introduce more IAM PrivEsc vulns into stack and demonstrate enumeration using Checkov/pmapper
+- Automate remediation of non-compliances found by AWS Config using SSM or a Lambda function - This may have broader consequences and we may want to make sure we can see what else is using that Security Group.
+- Introduce more IAM PrivEsc vulns into stack and demonstrate enumeration using Checkov/pmapper + automate remediation
 
 # Pain points
 
